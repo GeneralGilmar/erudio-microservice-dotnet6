@@ -2,6 +2,7 @@
 using GeekShopping.ProductAPI.Model.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
@@ -10,16 +11,18 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GeekShopping.ProductAPI.Migrations
 {
     [DbContext(typeof(MySqlContext))]
-    [Migration("20230921185245_AddProductMigrations")]
-    partial class AddProductMigrations
+    [Migration("20231025075525_seedmigration")]
+    partial class seedmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.11")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("ProductVersion", "7.0.13")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("GeekShopping.ProductAPI.Model.Product", b =>
                 {
@@ -28,37 +31,43 @@ namespace GeekShopping.ProductAPI.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<string>("CategoryName")
-                        .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("varchar(50)")
+                        .HasColumnType("nvarchar(50)")
                         .HasColumnName("category_name");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("varchar(500)")
-                        .HasColumnName("description");
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("ImageUrl")
-                        .IsRequired()
                         .HasMaxLength(300)
-                        .HasColumnType("varchar(300)")
-                        .HasColumnName("image_url");
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(150)
-                        .HasColumnType("varchar(150)")
-                        .HasColumnName("name");
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(65,30)")
-                        .HasColumnName("price");
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("product");
+                    b.ToTable("Products");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 2,
+                            CategoryName = "Category",
+                            Description = "Description",
+                            ImageUrl = "https://gyltech.co.ao/",
+                            Name = "Name",
+                            Price = 123.4m
+                        });
                 });
 #pragma warning restore 612, 618
         }
